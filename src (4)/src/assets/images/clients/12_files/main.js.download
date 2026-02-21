@@ -1,0 +1,636 @@
+/**
+* Template Name: Dewi
+* Template URL: https://bootstrapmade.com/dewi-free-multi-purpose-html-template/
+* Updated: Aug 07 2024 with Bootstrap v5.3.3
+* Author: BootstrapMade.com
+* License: https://bootstrapmade.com/license/
+*/
+
+(function() {
+  "use strict";
+
+  // Throttle function to limit how often a function can fire
+  function throttle(func, limit) {
+    let lastFunc;
+    let lastRan;
+    return function() {
+      const context = this;
+      const args = arguments;
+      if (!lastRan) {
+        func.apply(context, args);
+        lastRan = Date.now();
+      } else {
+        clearTimeout(lastFunc);
+        lastFunc = setTimeout(function() {
+          if ((Date.now() - lastRan) >= limit) {
+            func.apply(context, args);
+            lastRan = Date.now();
+          }
+        }, limit - (Date.now() - lastRan));
+      }
+    };
+  }
+
+  /**
+   * Apply .scrolled class to the body as the page is scrolled down
+   */
+  function toggleScrolled() {
+    const selectBody = document.querySelector('body');
+    const selectHeader = document.querySelector('#header');
+    if (!selectHeader || !selectHeader.classList.contains('scroll-up-sticky') && 
+        !selectHeader.classList.contains('sticky-top') && 
+        !selectHeader.classList.contains('fixed-top')) return;
+    window.scrollY > 100 ? selectBody.classList.add('scrolled') : selectBody.classList.remove('scrolled');
+  }
+
+  // Throttled scroll event
+  document.addEventListener('scroll', throttle(toggleScrolled, 100));
+
+  /**
+   * Mobile nav toggle
+   */
+  function setupMobileNav() {
+    const mobileNavToggleBtn = document.querySelector('.mobile-nav-toggle');
+    const navMenu = document.querySelector('#navmenu');
+    if (!mobileNavToggleBtn) return;
+
+    function setAriaExpanded(isExpanded) {
+      mobileNavToggleBtn.setAttribute('aria-expanded', String(isExpanded));
+      if (navMenu) navMenu.setAttribute('aria-hidden', String(!isExpanded));
+    }
+
+    function mobileNavToggle() {
+      const body = document.querySelector('body');
+      const willActivate = !body.classList.contains('mobile-nav-active');
+      body.classList.toggle('mobile-nav-active');
+      mobileNavToggleBtn.classList.toggle('bi-list');
+      mobileNavToggleBtn.classList.toggle('bi-x');
+      setAriaExpanded(willActivate);
+    }
+
+    // Click activation
+    mobileNavToggleBtn.addEventListener('click', mobileNavToggle);
+
+    // Keyboard activation (Enter/Space)
+    mobileNavToggleBtn.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        mobileNavToggle();
+      }
+    });
+
+    /**
+     * Hide mobile nav on same-page/hash links
+     */
+    document.querySelectorAll('#navmenu a').forEach(link => {
+      link.addEventListener('click', () => {
+        if (document.querySelector('.mobile-nav-active')) {
+          mobileNavToggle();
+          setAriaExpanded(false);
+        }
+      });
+    });
+
+    /**
+     * Toggle mobile nav dropdowns
+     */
+    document.querySelectorAll('.navmenu .toggle-dropdown').forEach(navmenu => {
+      navmenu.addEventListener('click', function(e) {
+        e.preventDefault();
+        this.parentNode.classList.toggle('active');
+        this.parentNode.nextElementSibling.classList.toggle('dropdown-active');
+        e.stopImmediatePropagation();
+      });
+    });
+
+    // Click outside to close on mobile
+    document.addEventListener('click', (e) => {
+      const body = document.body;
+      if (!body.classList.contains('mobile-nav-active')) return;
+      const clickedInsideNav = navMenu && navMenu.contains(e.target);
+      const clickedToggle = mobileNavToggleBtn.contains(e.target);
+      if (!clickedInsideNav && !clickedToggle) {
+        mobileNavToggle();
+        setAriaExpanded(false);
+      }
+    });
+
+    // Ensure initial ARIA state is correct on load
+    setAriaExpanded(false);
+  }
+
+  /**
+   * Preloader
+   */
+  function handlePreloader() {
+    const preloader = document.querySelector('#preloader');
+    if (preloader) {
+      // Delay removal to ensure everything is loaded
+      setTimeout(() => preloader.remove(), 500);
+    }
+  }
+
+  /**
+   * Scroll top button
+   */
+  function setupScrollTop() {
+    const scrollTop = document.querySelector('.scroll-top');
+    if (!scrollTop) return;
+
+    function toggleScrollTop() {
+      window.scrollY > 100 ? scrollTop.classList.add('active') : scrollTop.classList.remove('active');
+    }
+
+    scrollTop.addEventListener('click', (e) => {
+      e.preventDefault();
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
+    // Initial check
+    toggleScrollTop();
+    // Throttled scroll event
+    document.addEventListener('scroll', throttle(toggleScrollTop, 100));
+  }
+
+  /**
+   * Initialize all animations and plugins
+   */
+  function initPlugins() {
+    // Animation on scroll
+    if (typeof AOS !== 'undefined') {
+      AOS.init({
+        duration: 600,
+        easing: 'ease-in-out',
+        once: true,
+        mirror: false
+      });
+    }
+
+    // GLightbox
+    if (typeof GLightbox !== 'undefined') {
+      const glightbox = GLightbox({ selector: '.glightbox' });
+      const glightboxs = GLightbox({ selector: '.glightboxs' });
+    }
+
+    // Pure Counter
+    if (typeof PureCounter !== 'undefined') {
+      new PureCounter();
+    }
+
+    // Initialize swiper sliders
+    function initSwiper() {
+      if (typeof Swiper === 'undefined') return;
+      
+      document.querySelectorAll(".init-swiper").forEach(function(swiperElement) {
+        let config = JSON.parse(
+          swiperElement.querySelector(".swiper-config").innerHTML.trim()
+        );
+        new Swiper(swiperElement, config);
+      });
+    }
+
+    // Initialize isotope
+    function initIsotope() {
+      document.querySelectorAll('.isotope-layout').forEach(function(isotopeItem) {
+        let layout = isotopeItem.getAttribute('data-layout') ?? 'masonry';
+        let filter = isotopeItem.getAttribute('data-default-filter') ?? '*';
+        let sort = isotopeItem.getAttribute('data-sort') ?? 'original-order';
+
+        let initIsotope;
+        if (typeof imagesLoaded !== 'undefined' && typeof Isotope !== 'undefined') {
+          imagesLoaded(isotopeItem.querySelector('.isotope-container'), function() {
+            initIsotope = new Isotope(isotopeItem.querySelector('.isotope-container'), {
+              itemSelector: '.isotope-item',
+              layoutMode: layout,
+              filter: filter,
+              sortBy: sort
+            });
+          });
+        }
+
+        isotopeItem.querySelectorAll('.isotope-filters li').forEach(function(filters) {
+          filters.addEventListener('click', function() {
+            isotopeItem.querySelector('.isotope-filters .filter-active').classList.remove('filter-active');
+            this.classList.add('filter-active');
+            initIsotope.arrange({
+              filter: this.getAttribute('data-filter')
+            });
+            if (typeof AOS !== 'undefined') {
+              AOS.refresh();
+            }
+          }, false);
+        });
+      });
+    }
+
+    // Initialize after slight delay to prioritize critical rendering
+    setTimeout(() => {
+      initSwiper();
+      initIsotope();
+    }, 300);
+  }
+
+  /**
+   * Correct scrolling position upon page load for URLs containing hash links.
+   */
+  function handleHashLinks() {
+    if (window.location.hash) {
+      const targetElement = document.querySelector(window.location.hash);
+      if (targetElement) {
+        setTimeout(() => {
+          let scrollMarginTop = getComputedStyle(targetElement).scrollMarginTop;
+          window.scrollTo({
+            top: targetElement.offsetTop - parseInt(scrollMarginTop),
+            behavior: 'smooth'
+          });
+        }, 100);
+      }
+    }
+  }
+
+  /**
+   * Navmenu Scrollspy
+   */
+  function setupScrollspy() {
+    const navmenulinks = document.querySelectorAll('.navmenu a');
+    if (!navmenulinks.length) return;
+
+    function navmenuScrollspy() {
+      navmenulinks.forEach(navmenulink => {
+        if (!navmenulink.hash) return;
+        const section = document.querySelector(navmenulink.hash);
+        if (!section) return;
+        const position = window.scrollY + 200;
+        if (position >= section.offsetTop && position <= (section.offsetTop + section.offsetHeight)) {
+          document.querySelectorAll('.navmenu a.active').forEach(link => link.classList.remove('active'));
+          navmenulink.classList.add('active');
+        } else {
+          navmenulink.classList.remove('active');
+        }
+      });
+    }
+
+    // Initial check
+    navmenuScrollspy();
+    // Throttled scroll event
+    document.addEventListener('scroll', throttle(navmenuScrollspy, 100));
+  }
+
+  /**
+   * Comment System Functions
+   */
+  function setupCommentSystem() {
+    // Function to render a comment
+    function renderComment(name, email, comment, date) {
+      return `
+        <li class="mb-5">
+          <div class="comment-area-box">
+            <h5 class="mb-1">${name}</h5>
+            <div class="comment-meta mt-4 mt-lg-0 mt-md-0 float-lg-right float-md-right">
+              <a href="#"><i class="icofont-reply mr-2 text-muted"></i>Posted ${date}</a>
+            </div>
+            <div class="comment-content mt-3">
+              <p>${comment}</p>
+            </div>
+          </div>
+        </li>
+      `;
+    }
+
+    // Function to get comments from Local Storage
+    function getCommentsFromStorage() {
+      try {
+        const storedComments = localStorage.getItem('comments');
+        return storedComments ? JSON.parse(storedComments) : [];
+      } catch (e) {
+        console.error('Error reading comments from storage:', e);
+        return [];
+      }
+    }
+
+    // Function to render all comments from Local Storage
+    function renderAllComments() {
+      const commentList = document.getElementById('comment-tree');
+      if (!commentList) return;
+      
+      // Clear existing comments to avoid duplicates
+      commentList.innerHTML = '';
+      
+      const comments = getCommentsFromStorage();
+      if (comments.length) {
+        const fragment = document.createDocumentFragment();
+        
+        comments.forEach(comment => {
+          const li = document.createElement('li');
+          li.className = 'mb-5';
+          li.innerHTML = renderComment(
+            comment.name, 
+            comment.email, 
+            comment.comment, 
+            new Date(comment.timestamp || Date.now()).toLocaleString()
+          );
+          fragment.appendChild(li);
+        });
+        
+        commentList.appendChild(fragment);
+      }
+    }
+
+    // Function to add comment to the list
+    function addComment(name, email, comment) {
+      const commentList = document.getElementById('comment-tree');
+      if (!commentList) return;
+
+      const timestamp = Date.now();
+      const newComment = {
+        name,
+        email,
+        comment,
+        timestamp
+      };
+
+      // Store comment in Local Storage
+      const comments = getCommentsFromStorage();
+      comments.unshift(newComment); // Add to beginning
+      
+      try {
+        localStorage.setItem('comments', JSON.stringify(comments));
+      } catch (e) {
+        console.error('Error saving comment:', e);
+        // Handle storage full or other errors
+        if (e.name === 'QuotaExceededError') {
+          // Remove oldest comments if storage is full
+          while (comments.length > 10) {
+            comments.pop();
+          }
+          localStorage.setItem('comments', JSON.stringify(comments));
+        }
+      }
+
+      // Render the new comment
+      const li = document.createElement('li');
+      li.className = 'mb-5';
+      li.innerHTML = renderComment(name, email, comment, new Date(timestamp).toLocaleString());
+      commentList.insertBefore(li, commentList.firstChild);
+    }
+
+    // Initialize comment system
+    renderAllComments();
+
+    // Handle comment form submission if exists
+    const commentForm = document.getElementById('comment-form');
+    if (commentForm) {
+      commentForm.addEventListener('submit', function(e) {
+        e.preventDefault();
+        const name = this.querySelector('[name="name"]').value.trim();
+        const email = this.querySelector('[name="email"]').value.trim();
+        const comment = this.querySelector('[name="comment"]').value.trim();
+        
+        if (name && comment) {
+          addComment(name, email, comment);
+          this.reset();
+        }
+      });
+    }
+  }
+
+  /**
+   * Initialize jQuery components
+   */
+  function initjQueryComponents() {
+    if (typeof jQuery === 'undefined') return;
+
+    jQuery(document).ready(function($) {
+      var window_width = $(window).width(),
+          window_height = window.innerHeight,
+          header_height = $(".default-header").height(),
+          header_height_static = $(".site-header.static").outerHeight(),
+          fitscreen = window_height - header_height;
+
+      $(".fullscreen").css("height", window_height);
+      $(".fitscreen").css("height", fitscreen);
+
+      // Initialize niceSelect on all select elements at once
+      $('select').niceSelect();
+
+      // Image popup
+      $('.img-pop-up').magnificPopup({
+        type: 'image',
+        gallery: {
+          enabled: true
+        }
+      });
+
+      // Video popup
+      $('.play-btn').magnificPopup({
+        type: 'iframe',
+        mainClass: 'mfp-fade',
+        removalDelay: 160,
+        preloader: false,
+        fixedContentPos: false
+      });
+
+      // Superfish menu
+      $('.nav-menu').superfish({
+        animation: {
+          opacity: 'show'
+        },
+        speed: 400
+      });
+
+      // Mobile Navigation
+      if ($('#nav-menu-container').length) {
+        var $mobile_nav = $('#nav-menu-container').clone().prop({
+          id: 'mobile-nav'
+        });
+        $mobile_nav.find('> ul').attr({
+          'class': '',
+          'id': ''
+        });
+        $('body').append($mobile_nav);
+        $('body').prepend('<button type="button" id="mobile-nav-toggle"><i class="lnr lnr-menu"></i></button>');
+        $('body').append('<div id="mobile-body-overly"></div>');
+        $('#mobile-nav').find('.menu-has-children').prepend('<i class="lnr lnr-chevron-down"></i>');
+
+        $(document).on('click', '.menu-has-children i', function(e) {
+          $(this).next().toggleClass('menu-item-active');
+          $(this).nextAll('ul').eq(0).slideToggle();
+          $(this).toggleClass("lnr-chevron-up lnr-chevron-down");
+        });
+
+        $(document).on('click', '#mobile-nav-toggle', function(e) {
+          $('body').toggleClass('mobile-nav-active');
+          $('#mobile-nav-toggle i').toggleClass('lnr-cross lnr-menu');
+          $('#mobile-body-overly').toggle();
+        });
+
+        $(document).click(function(e) {
+          var container = $("#mobile-nav, #mobile-nav-toggle");
+          if (!container.is(e.target) && container.has(e.target).length === 0) {
+            if ($('body').hasClass('mobile-nav-active')) {
+              $('body').removeClass('mobile-nav-active');
+              $('#mobile-nav-toggle i').toggleClass('lnr-cross lnr-menu');
+              $('#mobile-body-overly').fadeOut();
+            }
+          }
+        });
+      } else if ($("#mobile-nav, #mobile-nav-toggle").length) {
+        $("#mobile-nav, #mobile-nav-toggle").hide();
+      }
+
+      // Smooth scroll for the menu and links with .scrollto classes
+      $('.nav-menu a, #mobile-nav a, .scrollto').on('click', function() {
+        if (location.pathname.replace(/^\//, '') == this.pathname.replace(/^\//, '') && location.hostname == this.hostname) {
+          var target = $(this.hash);
+          if (target.length) {
+            var top_space = 0;
+
+            if ($('#header').length) {
+              top_space = $('#header').outerHeight();
+
+              if (!$('#header').hasClass('header-fixed')) {
+                top_space = top_space;
+              }
+            }
+
+            $('html, body').animate({
+              scrollTop: target.offset().top - top_space
+            }, 1500, 'easeInOutExpo');
+
+            if ($(this).parents('.nav-menu').length) {
+              $('.nav-menu .menu-active').removeClass('menu-active');
+              $(this).closest('li').addClass('menu-active');
+            }
+
+            if ($('body').hasClass('mobile-nav-active')) {
+              $('body').removeClass('mobile-nav-active');
+              $('#mobile-nav-toggle i').toggleClass('lnr-times lnr-bars');
+              $('#mobile-body-overly').fadeOut();
+            }
+            return false;
+          }
+        }
+      });
+
+      // Header scroll class
+      $(window).on('scroll', throttle(function() {
+        if ($(this).scrollTop() > 100) {
+          $('#header').addClass('header-scrolled');
+        } else {
+          $('#header').removeClass('header-scrolled');
+        }
+      }, 100));
+
+      // Initialize carousels
+      function initCarousels() {
+        $('.active-relatedjob-carusel').owlCarousel({
+          items: 1,
+          autoplay: true,
+          loop: true,
+          margin: 30,
+          dots: true
+        });
+
+        $('.active-review-carusel').owlCarousel({
+          items: 2,
+          margin: 30,
+          autoplay: true,
+          loop: true,
+          dots: true,
+          responsive: {
+            0: { items: 1 },
+            480: { items: 1 },
+            768: { items: 2 }
+          }
+        });
+
+        $('.active-popular-post-carusel').owlCarousel({
+          items: 2,
+          margin: 30,
+          autoplay: true,
+          loop: true,
+          dots: true,
+          responsive: {
+            0: { items: 1 },
+            480: { items: 1 },
+            768: { items: 1 },
+            961: { items: 2 }
+          }
+        });
+      }
+
+      // Initialize Google Maps if needed
+      function initGoogleMaps() {
+        if (document.getElementById("map") && typeof google !== 'undefined') {
+          google.maps.event.addDomListener(window, 'load', function() {
+            var mapOptions = {
+              zoom: 11,
+              center: new google.maps.LatLng(40.6700, -73.9400),
+              styles: [{"featureType":"water","elementType":"geometry","stylers":[{"color":"#e9e9e9"},{"lightness":17}]},{"featureType":"landscape","elementType":"geometry","stylers":[{"color":"#f5f5f5"},{"lightness":20}]},{"featureType":"road.highway","elementType":"geometry.fill","stylers":[{"color":"#ffffff"},{"lightness":17}]},{"featureType":"road.highway","elementType":"geometry.stroke","stylers":[{"color":"#ffffff"},{"lightness":29},{"weight":0.2}]},{"featureType":"road.arterial","elementType":"geometry","stylers":[{"color":"#ffffff"},{"lightness":18}]},{"featureType":"road.local","elementType":"geometry","stylers":[{"color":"#ffffff"},{"lightness":16}]},{"featureType":"poi","elementType":"geometry","stylers":[{"color":"#f5f5f5"},{"lightness":21}]},{"featureType":"poi.park","elementType":"geometry","stylers":[{"color":"#dedede"},{"lightness":21}]},{"elementType":"labels.text.stroke","stylers":[{"visibility":"on"},{"color":"#ffffff"},{"lightness":16}]},{"elementType":"labels.text.fill","stylers":[{"saturation":36},{"color":"#333333"},{"lightness":40}]},{"elementType":"labels.icon","stylers":[{"visibility":"off"}]},{"featureType":"transit","elementType":"geometry","stylers":[{"color":"#f2f2f2"},{"lightness":19}]},{"featureType":"administrative","elementType":"geometry.fill","stylers":[{"color":"#fefefe"},{"lightness":20}]},{"featureType":"administrative","elementType":"geometry.stroke","stylers":[{"color":"#fefefe"},{"lightness":17},{"weight":1.2}]}]
+            };
+
+            var mapElement = document.getElementById('map');
+            var map = new google.maps.Map(mapElement, mapOptions);
+
+            var marker = new google.maps.Marker({
+              position: new google.maps.LatLng(40.6700, -73.9400),
+              map: map,
+              title: 'Snazzy!'
+            });
+          });
+        }
+      }
+
+      // Mailchimp form
+      if ($('#mc_embed_signup').length && typeof $.fn.ajaxChimp === 'function') {
+        $('#mc_embed_signup').find('form').ajaxChimp();
+      }
+
+      // Initialize with slight delay
+      setTimeout(() => {
+        initCarousels();
+        initGoogleMaps();
+      }, 500);
+    });
+  }
+
+  /**
+   * Main initialization function
+   */
+  function init() {
+    // Setup mobile navigation
+    setupMobileNav();
+    
+    // Handle preloader
+    handlePreloader();
+    
+    // Setup scroll top button
+    setupScrollTop();
+    
+    // Initialize plugins
+    initPlugins();
+    
+    // Handle hash links
+    handleHashLinks();
+    
+    // Setup scrollspy
+    setupScrollspy();
+    
+    // Setup comment system
+    setupCommentSystem();
+    
+    // Initialize jQuery components
+    initjQueryComponents();
+  }
+
+  // Start initialization when DOM is ready
+  if (document.readyState !== 'loading') {
+    init();
+  } else {
+    document.addEventListener('DOMContentLoaded', init);
+  }
+
+})();

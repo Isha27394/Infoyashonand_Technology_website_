@@ -1,0 +1,216 @@
+/* Blog-specific scroll animations */
+
+/* Base blog animation classes */
+.blog-fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blog-fade-up.blog-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.blog-fade-left {
+  opacity: 0;
+  transform: translateX(-30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blog-fade-left.blog-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.blog-fade-right {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blog-fade-right.blog-visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.blog-scale-in {
+  opacity: 0;
+  transform: scale(0.9);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blog-scale-in.blog-visible {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.blog-fade-down {
+  opacity: 0;
+  transform: translateY(-30px);
+  transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blog-fade-down.blog-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Enhanced mobile optimizations for blog animations */
+@media (max-width: 768px) {
+  /* Faster, more responsive animations on mobile */
+  .blog-fade-up,
+  .blog-fade-left,
+  .blog-fade-right,
+  .blog-fade-down,
+  .blog-scale-in,
+  .blog-hero-animate,
+  .blog-card-animate {
+    transition-duration: 0.5s !important;
+    transition-timing-function: cubic-bezier(0.25, 0.46, 0.45, 0.94) !important;
+  }
+
+  /* Shorter animation distances for mobile */
+  .blog-fade-up {
+    transform: translateY(15px);
+  }
+
+  .blog-fade-left {
+    transform: translateX(-15px);
+  }
+
+  .blog-fade-right {
+    transform: translateX(15px);
+  }
+
+  .blog-fade-down {
+    transform: translateY(-15px);
+  }
+
+  .blog-scale-in {
+    transform: scale(0.96);
+  }
+
+  /* Faster stagger delays on mobile */
+  .blog-stagger-1 { transition-delay: 0.05s !important; }
+  .blog-stagger-2 { transition-delay: 0.1s !important; }
+  .blog-stagger-3 { transition-delay: 0.15s !important; }
+  .blog-stagger-4 { transition-delay: 0.2s !important; }
+  .blog-stagger-5 { transition-delay: 0.25s !important; }
+  .blog-stagger-6 { transition-delay: 0.3s !important; }
+
+  /* Mobile-specific hero animation */
+  .blog-hero-animate {
+    transform: translateY(10px);
+    transition-duration: 0.6s !important;
+  }
+
+  /* Mobile card animations */
+  .blog-card-animate {
+    transform: translateY(15px) scale(0.98);
+  }
+}
+
+/* Blog hero animation */
+.blog-hero-animate {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.8s ease-out;
+}
+
+.blog-hero-animate.blog-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Blog card specific animations */
+.blog-card-animate {
+  opacity: 0;
+  transform: translateY(25px) scale(0.98);
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.blog-card-animate.blog-visible {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+}
+
+/* Stagger delays for blog elements */
+.blog-stagger-1 { transition-delay: 0.1s; }
+.blog-stagger-2 { transition-delay: 0.2s; }
+.blog-stagger-3 { transition-delay: 0.3s; }
+.blog-stagger-4 { transition-delay: 0.4s; }
+.blog-stagger-5 { transition-delay: 0.5s; }
+.blog-stagger-6 { transition-delay: 0.6s; }
+
+/* Ensure blog animations don't conflict with loading screen */
+.blog-fade-up:not(.clean-rotate-no-blink):not(.clean-name),
+.blog-fade-left:not(.clean-rotate-no-blink):not(.clean-name),
+.blog-fade-right:not(.clean-rotate-no-blink):not(.clean-name),
+.blog-scale-in:not(.clean-rotate-no-blink):not(.clean-name) {
+  /* Blog animations only */
+}
+
+/* Disable blog animations on other pages */
+body:not(.blog-page) .blog-fade-up,
+body:not(.blog-page) .blog-fade-left,
+body:not(.blog-page) .blog-fade-right,
+body:not(.blog-page) .blog-scale-in,
+body:not(.blog-page) .blog-hero-animate {
+  opacity: 1 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Mobile-specific enhancements */
+@media (max-width: 480px) {
+  /* Extra small mobile devices */
+  .blog-fade-up,
+  .blog-fade-left,
+  .blog-fade-right,
+  .blog-fade-down {
+    transform: translateY(10px) !important;
+  }
+  
+  .blog-fade-left {
+    transform: translateX(-10px) !important;
+  }
+  
+  .blog-fade-right {
+    transform: translateX(10px) !important;
+  }
+  
+  /* Even faster animations on small screens */
+  .blog-fade-up,
+  .blog-fade-left,
+  .blog-fade-right,
+  .blog-fade-down,
+  .blog-scale-in,
+  .blog-hero-animate {
+    transition-duration: 0.4s !important;
+  }
+  
+  /* Minimal stagger delays */
+  .blog-stagger-1 { transition-delay: 0.02s !important; }
+  .blog-stagger-2 { transition-delay: 0.04s !important; }
+  .blog-stagger-3 { transition-delay: 0.06s !important; }
+  .blog-stagger-4 { transition-delay: 0.08s !important; }
+  .blog-stagger-5 { transition-delay: 0.1s !important; }
+  .blog-stagger-6 { transition-delay: 0.12s !important; }
+}
+
+/* Ensure smooth performance on mobile */
+@media (max-width: 768px) {
+  .blog-fade-up,
+  .blog-fade-left,
+  .blog-fade-right,
+  .blog-fade-down,
+  .blog-scale-in,
+  .blog-hero-animate {
+    /* Hardware acceleration for mobile */
+    transform: translateZ(0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+    will-change: transform, opacity;
+  }
+}

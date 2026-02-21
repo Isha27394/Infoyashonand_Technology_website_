@@ -1,0 +1,53 @@
+/* Lightweight Mobile Fix - Only essential fixes */
+
+/* Apply only to mobile devices */
+@media (max-width: 768px) {
+  /* Prevent horizontal scroll only */
+  html, body {
+    overflow-x: hidden;
+  }
+
+  #root {
+    overflow-x: hidden;
+  }
+
+  /* Basic responsive images */
+  img {
+    max-width: 100%;
+    height: auto;
+  }
+
+  /* Prevent zoom on input focus (iOS) */
+  input, textarea, select {
+    font-size: 16px;
+  }
+}/* Port
+folio filter buttons - keep in one row on mobile */
+@media (max-width: 768px) {
+  /* Portfolio filter buttons container */
+  div[style*="display: flex"][style*="gap: 15px"][style*="justifyContent: center"] {
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    padding: 0 10px !important;
+    gap: 10px !important;
+  }
+  
+  /* Individual filter buttons on mobile */
+  div[style*="display: flex"][style*="gap: 15px"] button {
+    white-space: nowrap !important;
+    flex-shrink: 0 !important;
+    min-width: auto !important;
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+  }
+}/* Ensure loading screen shows immediately */
+body {
+  margin: 0;
+  padding: 0;
+  background: #ffffff;
+}
+
+/* Prevent any flicker during initial load */
+#root {
+  min-height: 100vh;
+}

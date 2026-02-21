@@ -1,0 +1,209 @@
+// App.js
+import React, { useState, useEffect } from "react";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
+
+import Navbar from "./components/NavBar";
+import Footer from "./components/Footer";
+import Hero from "./components/Hero";
+import LoadingScreen from "./components/LoadingScreen";
+import PageTransition from "./components/PageTransition";
+
+import { initAllAnimations } from "./utils/animations";
+import { initMobileScrollFixes, scrollToTopAfterLoad, forceEnableMobileScroll } from "./utils/mobileScrollFix";
+
+import "./styles/mobile-light-fix.css";
+import "./styles/page-transitions.css";
+import "./styles/website-animations.css";
+import "./styles/scroll-animations.css";
+import "./styles/blog-animations.css";
+
+// Main Pages
+import Home from "./pages/Home";
+import Internship from "./pages/Internship";
+import InternshipContent from "./pages/InternshipContent";
+import Blog from "./pages/Blog";
+import Career from "./pages/Career";
+
+// Portfolio
+import ESalary from "./pages/Portfolio/Esalary";
+import PatTantra from "./pages/Portfolio/PatTantra";
+import Ecare360 from "./pages/Portfolio/Ecare360";
+import Scroller from "./pages/Portfolio/Scroller";
+import Dhaara from "./pages/Portfolio/Dhaara";
+import ExpertGuruji from "./pages/Portfolio/ExpertGuruji";
+import ConstructIQ from "./pages/Portfolio/ConstructIQ";
+import DigitalSchool from "./pages/Portfolio/DigitalSchool";
+import KamDhanda from "./pages/Portfolio/KamDhanda";
+import ExpertSkill from "./pages/Portfolio/ExpertSkill";
+import Marketing from "./pages/Portfolio/Marketing";
+import Matrimonial from "./pages/Portfolio/Matrimonial";
+
+// Leadership
+import Ceo from "./pages/Leadership/Ceo";
+import CeoMadam from "./pages/Leadership/CeoMadam";
+
+// Job Details
+import WebDeveloper from "./pages/JobDetails/WebDeveloper";
+import AndroidDeveloper from "./pages/JobDetails/AndroidDeveloper";
+import DigitalMarket from "./pages/JobDetails/Digitalmarket";
+import UiDesigner from "./pages/JobDetails/Ui";
+import SoftwareEngineer from "./pages/JobDetails/Software";
+
+// Job Application Form
+import JobApplicationForm from "./pages/JobDetails/JobApplicationForm";
+
+// Blog Pages
+import Esalary from "./pages/Blog/Esalary";
+import Expertguruji from "./pages/Blog/Expertguruji";
+import Dhaara1 from "./pages/Blog/Dhaara1";
+import ExpertSkill1 from "./pages/Blog/ExpertSkilll";
+import Kamdhanda from "./pages/Blog/Kamdhanda";
+import DigitalSchool1 from "./pages/Blog/DigitalSchool1";
+import ScrollerBlog from "./pages/Blog/Scroller";
+import PatTantraBlog from "./pages/Blog/PatTantra ";
+import Ecare1 from "./pages/Blog/Ecare1";
+
+import Terms from "./pages/terms";
+import Shipping from "./pages/shipping";
+import Privacy from "./pages/privacy";
+import Refund from "./pages/refund";
+
+function Layout() {
+  const location = useLocation();
+  const [showLoading, setShowLoading] = useState(true);
+
+  const hideLoader = location.pathname === "/blog";
+  const hideLayout = location.pathname === "/job-application-form";
+
+  // Run scroll fixes ONLY once
+  useEffect(() => {
+    initMobileScrollFixes();
+  }, []);
+
+  // Run animations on every page change
+  useEffect(() => {
+    initAllAnimations();
+    scrollToTopAfterLoad();
+  }, [location.pathname]);
+
+  // Loader timing with desktop scroll fix
+  useEffect(() => {
+    const isMobile = window.innerWidth <= 768;
+    const loadingTime = isMobile ? 1500 : 3000;
+
+    // Ensure desktop scrolling works from start
+    if (!isMobile) {
+      document.body.style.overflow = 'auto';
+      document.documentElement.style.overflow = 'auto';
+      document.body.style.position = 'relative';
+      document.body.classList.add('loaded');
+    }
+
+    const timer = setTimeout(() => {
+      setShowLoading(false);
+      
+      // Mobile-specific completion handling
+      if (isMobile) {
+        // Wait for loading screen fade to complete before enabling full scroll
+        setTimeout(() => {
+          document.body.classList.add('loaded');
+          
+          // Force enable mobile scrolling aggressively
+          forceEnableMobileScroll();
+          scrollToTopAfterLoad();
+        }, 800); // After fade completes
+      } else {
+        // Desktop - ensure scrolling works immediately
+        document.body.style.overflow = 'auto';
+        document.documentElement.style.overflow = 'auto';
+        document.body.classList.add('loaded');
+      }
+    }, loadingTime);
+
+    return () => clearTimeout(timer);
+  }, []);
+
+  return (
+    <>
+      {!hideLoader && <LoadingScreen isVisible={showLoading} />}
+
+      {!hideLayout && <Navbar />}
+
+      <Routes>
+        {/* Home Page */}
+        <Route
+          path="/"
+          element={
+            <PageTransition>
+              <Hero />
+              <Home />
+            </PageTransition>
+          }
+        />
+
+        {/* Portfolio Pages */}
+        <Route path="/portfolio/e-salary" element={<ESalary />} />
+        <Route path="/portfolio/pattantra" element={<PatTantra />} />
+        <Route path="/portfolio/ecare360" element={<Ecare360 />} />
+        <Route path="/portfolio/scroller" element={<Scroller />} />
+        <Route path="/portfolio/dhaara" element={<Dhaara />} />
+        <Route path="/portfolio/expert-guruji" element={<ExpertGuruji />} />
+        <Route path="/portfolio/constructiq" element={<ConstructIQ />} />
+        <Route path="/portfolio/digital-school" element={<DigitalSchool />} />
+        <Route path="/portfolio/kamdhanda" element={<KamDhanda />} />
+        <Route path="/portfolio/expert-skill" element={<ExpertSkill />} />
+        <Route path="/portfolio/marketing-pro" element={<Marketing />} />
+        <Route path="/portfolio/matrimonial" element={<Matrimonial />} />
+
+        {/* Blog Detail Pages */}
+        <Route path="/blog/e-salary" element={<Esalary />} />
+        <Route path="/blog/guruji" element={<Expertguruji />} />
+        <Route path="/blog/dharaa" element={<Dhaara1 />} />
+        <Route path="/blog/expert-skill" element={<ExpertSkill1 />} />
+        <Route path="/blog/kamdhanda" element={<Kamdhanda />} />
+        <Route path="/blog/digital-school" element={<DigitalSchool1 />} />
+        <Route path="/blog/scroller-app" element={<ScrollerBlog />} />
+        <Route path="/blog/ecare360" element={<Ecare1 />} />
+        <Route path="/blog/pattantra" element={<PatTantraBlog />} />
+
+        {/* Main Blog Page */}
+        <Route path="/blog" element={<PageTransition><Blog /></PageTransition>} />
+
+        {/* Leadership */}
+        <Route path="/leader/shriram" element={<PageTransition><Ceo /></PageTransition>} />
+        <Route path="/leader/netra" element={<PageTransition><CeoMadam /></PageTransition>} />
+
+        {/* Internship & Career */}
+        <Route path="/internship" element={<PageTransition><Internship /></PageTransition>} />
+        <Route path="/internship-content" element={<PageTransition><InternshipContent /></PageTransition>} />
+        <Route path="/career" element={<PageTransition><Career /></PageTransition>} />
+
+        {/* Legal Pages */}
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/shipping" element={<Shipping />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/refund" element={<Refund />} />
+
+        {/* Job Details */}
+        <Route path="/JobDetails/web-developer" element={<PageTransition><WebDeveloper /></PageTransition>} />
+        <Route path="/JobDetails/android-developer" element={<PageTransition><AndroidDeveloper /></PageTransition>} />
+        <Route path="/JobDetails/digital-marketing" element={<PageTransition><DigitalMarket /></PageTransition>} />
+        <Route path="/JobDetails/uiux-designer" element={<PageTransition><UiDesigner /></PageTransition>} />
+        <Route path="/JobDetails/senior-software-engineer" element={<PageTransition><SoftwareEngineer /></PageTransition>} />
+
+        {/* Job Form */}
+        <Route path="/job-application-form" element={<JobApplicationForm />} />
+      </Routes>
+
+      {!hideLayout && <Footer />}
+    </>
+  );
+}
+
+export default function App() {
+  return (
+    <BrowserRouter>
+      <Layout />
+    </BrowserRouter>
+  );
+}

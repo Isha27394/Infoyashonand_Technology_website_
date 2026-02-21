@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scroll Animations Test</title>
+    <link rel="stylesheet" href="src/styles/scroll-animations.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            font-family: Arial, sans-serif;
+            background: #f5f5f5;
+        }
+        .test-section {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .content {
+            text-align: center;
+            padding: 40px;
+        }
+        h1 { color: #333; }
+        h2 { color: darkorange; }
+        p { color: #666; line-height: 1.6; }
+    </style>
+</head>
+<body>
+    <div class="test-section">
+        <div class="content">
+            <h1>Scroll Animation Test</h1>
+            <p>Scroll down to see animations in action</p>
+        </div>
+    </div>
+
+    <div class="test-section fade-in-up">
+        <div class="content">
+            <h2>Fade In Up</h2>
+            <p>This section animates from bottom to top</p>
+        </div>
+    </div>
+
+    <div class="test-section fade-in-left stagger-1">
+        <div class="content">
+            <h2>Fade In Left</h2>
+            <p>This section slides in from the left</p>
+        </div>
+    </div>
+
+    <div class="test-section fade-in-right stagger-2">
+        <div class="content">
+            <h2>Fade In Right</h2>
+            <p>This section slides in from the right</p>
+        </div>
+    </div>
+
+    <div class="test-section scale-in stagger-3">
+        <div class="content">
+            <h2>Scale In</h2>
+            <p>This section scales up from center</p>
+        </div>
+    </div>
+
+    <div class="test-section slide-in-bottom stagger-4">
+        <div class="content">
+            <h2>Slide In Bottom</h2>
+            <p>This section slides up from bottom</p>
+        </div>
+    </div>
+
+    <script>
+        // Initialize scroll animations
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
+                        observer.unobserve(entry.target);
+                    }
+                });
+            },
+            {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            }
+        );
+
+        // Observe all animated elements
+        document.querySelectorAll('.fade-in-up, .fade-in-left, .fade-in-right, .scale-in, .slide-in-bottom').forEach(element => {
+            observer.observe(element);
+        });
+
+        console.log('Scroll animations initialized');
+    </script>
+</body>
+</html>
